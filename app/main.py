@@ -5,8 +5,8 @@ from fastapi.templating import Jinja2Templates
 import os
 
 # Import schemas and crud functions
-from schemas import TodoCreate, TodoUpdate, TodoResponse
-from crud import create_todo, get_todos, get_todo, update_todo, delete_todo
+from app.schemas import TodoCreate, TodoUpdate, TodoResponse
+from app.crud import create_todo, get_todos, get_todo, update_todo, delete_todo
 
 app = FastAPI()
 
