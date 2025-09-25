@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Todo App (FastAPI + Templates)</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📋 Todo App</h1>
+
+    <!-- Create Todo -->
+    <form id="todoForm">
+      <input type="text" id="title" placeholder="Enter title" required>
+      <input type="text" id="description" placeholder="Enter description">
+      <button type="submit">➕ Add Todo</button>
+    </form>
+
+    <h2>✅ Todos List</h2>
+    <ul id="todoList"></ul>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
