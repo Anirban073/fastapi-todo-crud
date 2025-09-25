@@ -10,7 +10,7 @@ from app.crud import create_todo, get_todos, get_todo, update_todo, delete_todo
 
 app = FastAPI()
 
-# --- Correct static and template paths ---
+#static and template paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
@@ -20,17 +20,13 @@ app.mount(
     name="static"
 )
 
-# ---------------------------
 # Home route (Frontend)
-# ---------------------------
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-# ---------------------------
 # CRUD API routes
-# ---------------------------
 
 # Create
 @app.post("/todos/", response_model=TodoResponse)
