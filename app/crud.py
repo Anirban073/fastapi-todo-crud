@@ -1,6 +1,6 @@
 from app.database import SessionLocal
 from app.models import Todo
-from sqlalchemy import select, update, delete
+from sqlalchemy import select
 
 # CREATE
 def create_todo(title: str, description: str = None):
@@ -15,15 +15,13 @@ def create_todo(title: str, description: str = None):
 def get_todos():
     with SessionLocal() as session:
         stmt = select(Todo)
-        todo = session.scalars(stmt).all()
-        return todo
+        todos = session.scalars(stmt).all()
+        return todos
 
 # READ BY ID
 def get_todo(todo_id: int):
     with SessionLocal() as session:
-        # todo = select(Todo).where(Todo.id == todo_id)
-        todo = session.get(Todo, todo_id)
-        return todo
+        return session.get(Todo, todo_id)
 
 # UPDATE
 def update_todo(todo_id: int, title: str = None, description: str = None, completed: bool = None):
@@ -44,11 +42,9 @@ def update_todo(todo_id: int, title: str = None, description: str = None, comple
 # DELETE
 def delete_todo(todo_id: int):
     with SessionLocal() as session:
-        # todo = select(Todo).where(Todo.id == todo_id)
         todo = session.get(Todo, todo_id)
         if not todo:
             return False
         session.delete(todo)
         session.commit()
         return True
-    

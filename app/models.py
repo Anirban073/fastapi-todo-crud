@@ -8,12 +8,10 @@ class Base(DeclarativeBase):
 class Todo(Base):
     __tablename__ = "todos"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(100))
     description: Mapped[str] = mapped_column(String(250), nullable=True)
     completed: Mapped[bool] = mapped_column(Boolean, default=False)
-    
 
-
-# create table
+# Create tables if they don’t exist
 Base.metadata.create_all(bind=engine)

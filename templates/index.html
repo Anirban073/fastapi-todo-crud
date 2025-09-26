@@ -2,8 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Todo App (FastAPI + Templates)</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <title>Todo App (FastAPI + SQLite)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 500px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    form input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    form button {
+      padding: 8px 12px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f9fafb;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    button.action {
+      margin-left: 8px;
+      padding: 4px 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .edit { background: #facc15; }
+    .delete { background: #ef4444; color: white; }
+    .complete { background: #22c55e; color: white; }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -20,6 +89,87 @@
     <ul id="todoList"></ul>
   </div>
 
-  <script src="/static/script.js"></script>
+  <script>
+    const API_URL = "http://127.0.0.1:8000/todos/";
+
+    const todoForm = document.getElementById("todoForm");
+    const todoList = document.getElementById("todoList");
+
+    // Fetch and render todos
+    async function fetchTodos() {
+      const res = await fetch(API_URL);
+      const todos = await res.json();
+
+      todoList.innerHTML = "";
+      todos.forEach(todo => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span>
+            <strong>${todo.title}</strong> - ${todo.description || ""}
+            ${todo.completed ? "✔️" : ""}
+          </span>
+          <span>
+            <button class="action complete" onclick="toggleComplete(${todo.id}, ${todo.completed})">✔️</button>
+            <button class="action edit" onclick="editTodo(${todo.id})">✏️</button>
+            <button class="action delete" onclick="deleteTodo(${todo.id})">🗑️</button>
+          </span>
+        `;
+        todoList.appendChild(li);
+      });
+    }
+
+    // Add todo
+    todoForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = document.getElementById("title").value;
+      const description = document.getElementById("description").value;
+
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description })
+      });
+
+      todoForm.reset();
+      fetchTodos();
+    });
+
+    // Delete todo
+    async function deleteTodo(id) {
+      await fetch(API_URL + id, { method: "DELETE" });
+      fetchTodos();
+    }
+
+    // Toggle complete
+    async function toggleComplete(id, completed) {
+      await fetch(API_URL + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ completed: !completed })
+      });
+      fetchTodos();
+    }
+
+    // Edit todo (simple prompt)
+    async function editTodo(id) {
+      const newTitle = prompt("Enter new title:");
+      const newDescription = prompt("Enter new description:");
+
+      if (newTitle !== null && newDescription !== null) {
+        await fetch(API_URL + id, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: newTitle,
+            description: newDescription
+          })
+        });
+        fetchTodos();
+      }
+    }
+
+    // Load todos on page load
+    fetchTodos();
+  </script>
 </body>
 </html>
